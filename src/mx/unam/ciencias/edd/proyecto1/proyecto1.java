@@ -38,12 +38,14 @@ public class proyecto1{
 	/** Nombre del archivo donde guardara la salida */
 	private String nombreArchivo;
 	
+	/**
+	 * Constructor que inicializa las variables de estado
+	*/
 	public proyecto1(){
 		lineas = new Lista<>();
 		archivos = new Lista<>();
 		reversa = false;
 		ignora = false;
-		nombreArchivo = null;
 		nombreArchivo = null;
 	}
 	
@@ -52,7 +54,8 @@ public class proyecto1{
 		p.checaBanderas(args);
 		BufferedReader file = null;
 		try{
-			if(args.length == 0 || (args.length == 1 && p.reversa)){
+			if(args.length == 0 || (args.length == 1 && (p.reversa || p.ignora))
+				|| args.length == 2 && p.nombreArchivo != null){
 				file = new BufferedReader(new InputStreamReader(System.in));
 				p.leeArchivo(file);
 			}else{
@@ -143,26 +146,41 @@ public class proyecto1{
 				archivos.agrega(args[i]);
 	}
 	
-	public class miString implements Comparable<miString> {
+	/**
+	 * Clase privada que usaremos para poder sobrecargar el metodo compare, esto
+	 * es necesario para poder manejar los casos en los que la cadena tenga la letra
+	 * ñ, simbolos especiales al inicio o mayusculas.
+	*/
+	private class miString implements Comparable<miString> {
+		
 		private String str;
 		
 		public miString(String cadena){
 			this.str = cadena;
 		}
-		
+	
 		@Override public String toString(){
 			return str;
 		}
 		
+		/**
+		 * Sobrecargamos el metodo compareTo que usara mergeSort en Lista. Asi podremos
+		 * evaluar los caracteres especiales que pueden surgir en el documento, sin modificar
+		 * la ejecución de merge.
+		*/
 		@Override public int compareTo(miString cadena){
 			Collator collator = Collator.getInstance();
 			collator.setStrength(Collator.PRIMARY);
-			String string = cadena.toString();
-			if(!Character.isLetter(string.charAt(0)))
-				string = string.substring(1);
+			String stringA = cadena.toString();
+			String stringB = str;
+			if(!Character.isLetter(stringA.charAt(0)))
+				stringA = stringA.substring(1);
+			if(!Character.isLetter(stringB.charAt(0)))
+				stringB = stringB.substring(1);
 			if(ignora)
-				return collator.compare(str.replaceAll("\\s",""),string.replaceAll("\\s",""));
-			return collator.compare(str,string.toString());
+				return collator.compare(stringB.replaceAll("\\s",""),
+				stringA.replaceAll("\\s",""));
+			return collator.compare(stringB,stringA);
 		}
 	}
 }
