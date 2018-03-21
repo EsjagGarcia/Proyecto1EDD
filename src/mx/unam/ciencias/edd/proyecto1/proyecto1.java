@@ -171,16 +171,10 @@ public class proyecto1{
 		@Override public int compareTo(miString cadena){
 			Collator collator = Collator.getInstance();
 			collator.setStrength(Collator.PRIMARY);
-			String stringA = cadena.toString();
-			String stringB = str;
-			if(!Character.isLetter(stringA.charAt(0)))
-				stringA = stringA.substring(1);
-			if(!Character.isLetter(stringB.charAt(0)))
-				stringB = stringB.substring(1);
 			if(ignora)
-				return collator.compare(stringB.replaceAll("\\s",""),
-				stringA.replaceAll("\\s",""));
-			return collator.compare(stringB,stringA);
+				return collator.compare(str.replaceAll("\\s",""),
+										cadena.toString().replaceAll("\\s",""));
+			return collator.compare(str,cadena.toString());
 		}
 	}
 }
